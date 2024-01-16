@@ -58,5 +58,7 @@ platform :ios, '11.0' # or higher
 target 'YourAppName' do
   # ...
   pod 'react-native-vision-camera', :path => '../node_modules/@mrousavy/react-native-vision-camera'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'react-native-geolocation-service', :path => '../node_modules/react-native-geolocation-service'
 end
 

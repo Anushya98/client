@@ -1,14 +1,15 @@
 // components/AttendanceCard.js
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AttendanceModal from '../Screens/AttendancePage';
 import LinearGradient from 'react-native-linear-gradient';
-import { Camera } from 'react-native-vision-camera';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
     const [checkInTime, setCheckInTime] = useState("00:00");
     const [checkOutTime, setCheckOutTime] = useState("00:00");
+    const [totalHours, setTotalHours] = useState("00:00");
     const [isCheckingIn, setIsCheckingIn] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
 
@@ -19,24 +20,105 @@ const HomeScreen = ({ navigation }) => {
         const seconds = now.getSeconds().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
     };
+    useEffect(() => {
+        loadCheckInTime();
+        loadCheckOutTime();
+        loadTotalHours();
+        if (checkInTime !== "00:00" && checkOutTime === "00:00") {
+            // User has only checked in, set the button to "Pause"
+            setIsCheckingIn(true);
+        } else {
+            // User has checked out or no check-in, set the button to "Start"
+            setIsCheckingIn(false);
+        }
+    }, []);
 
+    const loadCheckInTime = async () => {
+        try {
+            const savedCheckInTime = await AsyncStorage.getItem('checkInTime');
+            if (savedCheckInTime) {
+                setCheckInTime(savedCheckInTime);
+            }
+        } catch (error) {
+            console.error('Error loading check-in time:', error);
+        }
+    };
+
+    const loadCheckOutTime = async () => {
+        try {
+            const savedCheckOutTime = await AsyncStorage.getItem('checkOutTime');
+            if (savedCheckOutTime) {
+                setCheckOutTime(savedCheckOutTime);
+            }
+        } catch (error) {
+            console.error('Error loading check-out time:', error);
+        }
+    };
+
+    const loadTotalHours = async () => {
+        try {
+            const savedTotalHours = await AsyncStorage.getItem('totalHours');
+            if (savedTotalHours) {
+                setTotalHours(savedTotalHours);
+            }
+        } catch (error) {
+            console.error('Error loading total hours:', error);
+        }
+    };
+
+
+    const saveCheckInTime = async (time) => {
+        try {
+            await AsyncStorage.setItem('checkInTime', time);
+        } catch (error) {
+            console.error('Error saving check-in time:', error);
+        }
+    };
+
+    const saveCheckOutTime = async (time) => {
+        try {
+            await AsyncStorage.setItem('checkOutTime', time);
+        } catch (error) {
+            console.error('Error saving check-out time:', error);
+        }
+    };
+
+    const saveTotalHours = async (totalHours) => {
+        try {
+            await AsyncStorage.setItem('totalHours', totalHours);
+        } catch (error) {
+            console.error('Error saving total hours:', error);
+        }
+    };
 
     const handleCheckInOut = () => {
         if (isCheckingIn) {
-            // User is checking in
-            const currentTime = getCurrentTime();
-            setCheckInTime(currentTime);
-
-            // Reset check-out time to "00:00" when checking in after checking out
-            if (checkOutTime) {
-                setCheckOutTime("00:00");
-            }
-        } else {
             // User is checking out
             const currentTime = getCurrentTime();
             setCheckOutTime(currentTime);
+
+            // Calculate total hours and save to AsyncStorage
+            const totalHoursValue = calculateTotalHours();
+            saveCheckOutTime(currentTime);
+            saveTotalHours(totalHoursValue);
+            setTotalHours(totalHoursValue);
+        } else {
+            // User is checking in
+            const currentTime = getCurrentTime();
+            setCheckInTime(currentTime);
+            saveCheckInTime(currentTime);
+
+            // Reset check-out time and total hours when checking in after checking out
+            if (checkOutTime !== "00:00") {
+                setCheckOutTime("00:00");
+                setTotalHours("00:00");
+                saveCheckOutTime("00:00");
+                saveTotalHours("00:00");
+            }
         }
-        setIsCheckingIn(!isCheckingIn); // Toggle the state
+
+        // Toggle the state
+        setIsCheckingIn(!isCheckingIn);
     };
 
 
@@ -83,16 +165,17 @@ const HomeScreen = ({ navigation }) => {
         month: 'long',
         day: 'numeric',
     });
-    const { hasPermission, requestPermission } = useCameraPermission()
-    const device = useCameraDevice('back')
 
-    if (device == null) return <NoCameraDeviceError />
+
+    const navigateToCameraScreen = () => {
+        navigation.navigate('CameraScreen');
+    };
 
     return (
         <View style={styles.Container}>
-            <View style={styles.cardContainer}>
+            <View style={styles.card}>
                 <TouchableOpacity onPress={toggleModal}>
-                    <View style={styles.card}>
+                    <View >
                         <Text style={styles.title}>Attendance</Text>
                         <Text style={styles.subtitle}>Set your attendance for {currentDate}</Text>
                         <Icon name="calendar-month" size={40} color="#333" style={styles.calendarIcon} />
@@ -102,18 +185,18 @@ const HomeScreen = ({ navigation }) => {
                     <AttendanceModal onClose={toggleModal} onSubmit={handleAttendanceSubmit} />
                 </Modal>
             </View>
-            <View style={styles.photocard}>
-                <LinearGradient
-                    colors={['#280071', '#B01C56']}
-                >
-                    <Text style={styles.phototext}>Take a photo</Text>
-                </LinearGradient>
-            </View>
-            <Camera
-                style={StyleSheet.absoluteFill}
-                device={device}
-                isActive={true}
-            />
+
+            <LinearGradient
+                colors={['#280071', '#B01C56']}
+                style={[styles.photocard]}
+            >
+                <TouchableOpacity
+                    style={styles.roundButton}
+                    onPress={navigateToCameraScreen}>
+                    <Text style={styles.buttonText}>Take photo</Text>
+                </TouchableOpacity>
+            </LinearGradient>
+
             <View style={styles.CheckIncard}>
                 <Text style={styles.Checkinheader}>Check In</Text>
                 <View style={styles.checkInOutButtonContainer}>
@@ -127,7 +210,9 @@ const HomeScreen = ({ navigation }) => {
                                     <View style={styles.iconContainer}>
                                         <Icon name="fingerprint" size={40} color="#fff" />
                                     </View>
-                                    <Text style={{ color: '#fff', fontSize: 26 }}>{isCheckingIn ? 'Start' : 'Pause'}</Text>
+                                    <Text style={{ color: '#fff', fontSize: 26 }}>
+                                        {isCheckingIn ? 'Pause' : 'Start'}
+                                    </Text>
                                 </TouchableOpacity>
                             </LinearGradient>
                         </View>
@@ -175,14 +260,14 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#fff',
     },
-    cardContainer: {
-        marginBottom: 16,
-    },
+    // cardContainer: {
+    //     marginBottom: 16,
+    // },
     card: {
         padding: 10,
         backgroundColor: '#f0f0f0',
         borderRadius: 10,
-        marginBottom: 10,
+        marginBottom: 20,
         elevation: 5,
         // iOS
         shadowColor: 'black',
@@ -192,33 +277,27 @@ const styles = StyleSheet.create({
     },
     photocard: {
         padding: 10,
-        backgroundColor: '#f0f0f0',
         borderRadius: 10,
-        marginBottom: 10,
+        marginBottom: 20,
         elevation: 5,
-        // iOS
         shadowColor: 'black',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     CheckIncard: {
         padding: 10,
         backgroundColor: '#f0f0f0',
         borderRadius: 10,
-        marginBottom: 10,
+        marginBottom: 20,
         elevation: 5,
         // iOS
         shadowColor: 'black',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
-        // Minus or inset effect
-        boxShadow: "-15px -15px 15px rgba(255,255,255,0.2), 15px 15px 15px rgba(0,0,0,0.1, inset -15px -15px 15px rgba(255,255,255,1), inset 15px 15px 15px rgba(0,0,0,0.1))",
-        borderWidth: 1,
-        // borderRightWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.5)',
-        // borderRightColor: 'rgba(255, 255, 255, 0.5)',
     },
     header: {
         fontSize: 20,
@@ -326,6 +405,28 @@ const styles = StyleSheet.create({
     timeText: {
         fontSize: 16,
         color: '#666',
+    },
+
+    linearGradient: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    roundButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 30, // Half of the button's width and height to make it round
+        padding: 10,
+        margin: 2, // Adjust as needed
+        elevation: 3,
+        width: 60, // Adjust as needed
+        height: 60, // Adjust as needed
+    },
+    buttonText: {
+        fontSize: 14,
+        color: '#000',
+        fontWeight: 'bold',
     },
 
 });
