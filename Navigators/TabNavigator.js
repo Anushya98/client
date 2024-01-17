@@ -65,7 +65,7 @@ const TabNavigator = () => {
                 />
 
                 <Tab.Screen
-                    name="ActiveLeads"
+                    name="Leads"
                     component={ActiveLeadsScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
