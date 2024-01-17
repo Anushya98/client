@@ -1,6 +1,6 @@
 // components/AttendanceCard.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AttendanceModal from '../Screens/AttendancePage';
 import LinearGradient from 'react-native-linear-gradient';
@@ -24,6 +24,7 @@ const HomeScreen = ({ navigation }) => {
         loadCheckInTime();
         loadCheckOutTime();
         loadTotalHours();
+
         if (checkInTime !== "00:00" && checkOutTime === "00:00") {
             // User has only checked in, set the button to "Pause"
             setIsCheckingIn(true);
@@ -31,7 +32,7 @@ const HomeScreen = ({ navigation }) => {
             // User has checked out or no check-in, set the button to "Start"
             setIsCheckingIn(false);
         }
-    }, []);
+    }, [checkInTime, checkOutTime]);
 
     const loadCheckInTime = async () => {
         try {
@@ -173,81 +174,95 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.Container}>
-            <View style={styles.card}>
-                <TouchableOpacity onPress={toggleModal}>
-                    <View >
-                        <Text style={styles.title}>Attendance</Text>
-                        <Text style={styles.subtitle}>Set your attendance for {currentDate}</Text>
-                        <Icon name="calendar-month" size={40} color="#333" style={styles.calendarIcon} />
-                    </View>
-                </TouchableOpacity>
-                <Modal visible={isModalVisible} animationType="slide" transparent>
-                    <AttendanceModal onClose={toggleModal} onSubmit={handleAttendanceSubmit} />
-                </Modal>
+            <View style={styles.profileCard}>
+                <Image source={require('../assets/profile_image.png')} style={styles.profileImage} />
+                <View style={styles.profileInfo}>
+                    <Text style={styles.welcomeText}>Welcome, User</Text>
+                    <Text>Start Your Work </Text>
+
+                    {/* Add the username dynamically */}
+                </View>
+                {/* <TouchableOpacity style={styles.notificationIcon}> */}
+                <Icon name="notifications-active" size={24} color="#000" style={styles.notificationIcon} />
+                {/* </TouchableOpacity> */}
             </View>
+            <View style={styles.cardContainer}>
+                <View style={styles.card}>
+                    <TouchableOpacity onPress={toggleModal}>
+                        <View >
+                            <Text style={styles.title}>Attendance</Text>
+                            <Text style={styles.subtitle}>Set your attendance for {currentDate}</Text>
+                            <Icon name="calendar-month" size={40} color="#333" style={styles.calendarIcon} />
+                        </View>
+                    </TouchableOpacity>
+                    <Modal visible={isModalVisible} animationType="slide" transparent>
+                        <AttendanceModal onClose={toggleModal} onSubmit={handleAttendanceSubmit} />
+                    </Modal>
+                </View>
 
-            <LinearGradient
-                colors={['#280071', '#B01C56']}
-                style={[styles.photocard]}
-            >
-                <TouchableOpacity
-                    style={styles.roundButton}
-                    onPress={navigateToCameraScreen}>
-                    <Text style={styles.buttonText}>Take photo</Text>
-                </TouchableOpacity>
-            </LinearGradient>
+                <LinearGradient
+                    colors={['#280071', '#B01C56']}
+                    style={[styles.photocard]}
+                >
+                    <TouchableOpacity
+                        style={styles.roundButton}
+                        onPress={navigateToCameraScreen}>
+                        <Text style={styles.buttonText}>Take photo</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
 
-            <View style={styles.CheckIncard}>
-                <Text style={styles.Checkinheader}>Check In</Text>
-                <View style={styles.checkInOutButtonContainer}>
-                    <View style={styles.outerCircularContainer}>
-                        <View style={styles.innerCircularContainer}>
-                            <LinearGradient
-                                colors={['#280071', '#B01C56']}
-                                style={[styles.checkInOutButton, styles.circularButton]}
-                            >
-                                <TouchableOpacity onPress={handleCheckInOut} >
-                                    <View style={styles.iconContainer}>
-                                        <Icon name="fingerprint" size={40} color="#fff" />
-                                    </View>
-                                    <Text style={{ color: '#fff', fontSize: 26 }}>
-                                        {isCheckingIn ? 'Pause' : 'Start'}
-                                    </Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
+                <View style={styles.CheckIncard}>
+                    <Text style={styles.Checkinheader}>Check In</Text>
+                    <View style={styles.checkInOutButtonContainer}>
+                        <View style={styles.outerCircularContainer}>
+                            <View style={styles.innerCircularContainer}>
+                                <LinearGradient
+                                    colors={['#280071', '#B01C56']}
+                                    style={[styles.checkInOutButton, styles.circularButton]}
+                                >
+                                    <TouchableOpacity onPress={handleCheckInOut} >
+                                        <View style={styles.iconContainer}>
+                                            <Icon name="fingerprint" size={40} color="#fff" />
+                                        </View>
+                                        <Text style={{ color: '#fff', fontSize: 26 }}>
+                                            {isCheckingIn ? 'Pause' : 'Start'}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </LinearGradient>
+                            </View>
                         </View>
                     </View>
-                </View>
-                <View style={styles.dateTimeContainer}>
-                    <Text style={styles.dateText}>{new Date().toLocaleDateString(undefined, {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                    })}</Text>
-                    <Text style={styles.timeText}>{new Date().toLocaleTimeString(undefined, {
-                        hour: 'numeric',
-                        minute: 'numeric',
-                    })}</Text>
-                </View>
-                <View style={styles.infoContainer}>
-                    <View style={styles.infoItem}>
-                        <Icon name="access-time" size={24} color="#B01C56" style={styles.infoIcon} />
-                        {checkInTime && <Text>{checkInTime}</Text>}
-                        {checkInTime && <Text style={styles.infoText}>Check In</Text>}
+                    <View style={styles.dateTimeContainer}>
+                        <Text style={styles.dateText}>{new Date().toLocaleDateString(undefined, {
+                            weekday: 'long',
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                        })}</Text>
+                        <Text style={styles.timeText}>{new Date().toLocaleTimeString(undefined, {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                        })}</Text>
                     </View>
-                    <View style={styles.infoItem}>
-                        <Icon name="access-time" size={24} color="#280071" style={styles.infoIcon} />
-                        {checkOutTime && <Text>{checkOutTime}</Text>}
-                        {checkOutTime && <Text style={styles.infoText}>Check Out</Text>}
-                    </View>
-                    {checkInTime && checkOutTime && (
+                    <View style={styles.infoContainer}>
                         <View style={styles.infoItem}>
-                            <Icon name="access-time" size={24} color="#000" style={styles.infoIcon} />
-                            <Text>{calculateTotalHours()} </Text>
-                            <Text style={styles.infoText}>Total Hr</Text>
+                            <Icon name="access-time" size={24} color="#B01C56" style={styles.infoIcon} />
+                            {checkInTime && <Text>{checkInTime}</Text>}
+                            {checkInTime && <Text style={styles.infoText}>Check In</Text>}
                         </View>
-                    )}
+                        <View style={styles.infoItem}>
+                            <Icon name="access-time" size={24} color="#280071" style={styles.infoIcon} />
+                            {checkOutTime && <Text>{checkOutTime}</Text>}
+                            {checkOutTime && <Text style={styles.infoText}>Check Out</Text>}
+                        </View>
+                        {checkInTime && checkOutTime && (
+                            <View style={styles.infoItem}>
+                                <Icon name="access-time" size={24} color="#000" style={styles.infoIcon} />
+                                <Text>{calculateTotalHours()} </Text>
+                                <Text style={styles.infoText}>Total Hr</Text>
+                            </View>
+                        )}
+                    </View>
                 </View>
             </View>
         </View>
@@ -257,17 +272,42 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        padding: 20,
+        // padding: 20,
         backgroundColor: '#fff',
     },
-    // cardContainer: {
-    //     marginBottom: 16,
-    // },
-    card: {
+    cardContainer: {
+        padding: 25,
+    },
+    profileCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#f0f0f0',
         padding: 10,
+    },
+    profileImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginRight: 20,
+        marginLeft: 10,
+    },
+    profileInfo: {
+        flex: 1,
+    },
+    welcomeText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    notificationIcon: {
+        padding: 10,
+    },
+    card: {
+        padding: 8,
         backgroundColor: '#f0f0f0',
         borderRadius: 10,
-        marginBottom: 20,
+        marginBottom: 15,
         elevation: 5,
         // iOS
         shadowColor: 'black',

@@ -24,41 +24,17 @@ const TabNavigator = () => {
                 screenOptions={{
                     activeTintColor: 'blue',
                     inactiveTintColor: 'gray',
+                    headerShown: false,
                     tabBarStyle: {
                         paddingBottom: 10,
                         paddingHorizontal: 10,
                         paddingVertical: 10,
                         height: 60,
+
                     },
+
                 }}
             >
-                <Tab.Screen
-                    name="Customers"
-                    component={CustomersScreen}
-                    options={{
-                        tabBarIcon: ({ color, size }) => (
-                            <Icon name="people-outline" color={color} size={size} />
-                        ),
-                    }}
-                />
-                <Tab.Screen
-                    name="Notifications"
-                    component={NotificationsScreen}
-                    options={{
-                        tabBarIcon: ({ color, size }) => (
-                            <Icon name="notifications-outline" color={color} size={size} />
-                        ),
-                    }}
-                />
-                <Tab.Screen
-                    name="Home"
-                    component={HomeScreen}
-                    options={{
-                        tabBarIcon: ({ color, size }) => (
-                            <Icon name="home-outline" color={color} size={size} />
-                        ),
-                    }}
-                />
                 <Tab.Screen
                     name="Profile"
                     component={ProfileScreen}
@@ -69,11 +45,40 @@ const TabNavigator = () => {
                     }}
                 />
                 <Tab.Screen
+                    name="Customers"
+                    component={CustomersScreen}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <Icon name="people-outline" color={color} size={size} />
+                        ),
+                    }}
+                />
+
+                <Tab.Screen
+                    name="Home"
+                    component={HomeScreen}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <Icon name="home-outline" color={color} size={size} />
+                        ),
+                    }}
+                />
+
+                <Tab.Screen
                     name="ActiveLeads"
                     component={ActiveLeadsScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <Icon name="people" color={color} size={size} />
+                        ),
+                    }}
+                />
+                <Tab.Screen
+                    name="Notifications"
+                    component={NotificationsScreen}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <Icon name="notifications-outline" color={color} size={size} />
                         ),
                     }}
                 />

@@ -1,13 +1,13 @@
-// src/LoginScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useAuth } from '../Navigators/AuthContext';
+import Svg, { Circle } from 'react-native-svg';
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth(); 
+  const { login } = useAuth();
 
   const handleLogin = () => {
     // Implement your login logic here
@@ -17,14 +17,24 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/Frontpage.jpg')}
-      style={styles.backgroundImage}
+    <View
+      style={styles.container}
     >
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Login Page</Text>
-        </View>
+      <View style={styles.header}>
+        {/* Logo */}
+        <Text style={styles.topText}>LOGO</Text>
+      </View>
+      <LinearGradient
+        colors={[ '#280071', '#B01C56']}
+        style={styles.welcome}
+      >
+        <Text style={styles.welcomeText}>Welcome to GPS Tracker</Text>
+      </LinearGradient>
+
+      <View style={styles.svgContainer}>
+        <Image source={require('../assets/Login.png')} style={styles.image} />
+      </View>
+      <View style={styles.contentContainer}>
         <TextInput
           style={styles.input}
           placeholder="Username"
@@ -38,8 +48,9 @@ const LoginScreen = ({ navigation }) => {
           value={password}
           onChangeText={(text) => setPassword(text)}
         />
+        <Text style={{ color: '#B01C56', alignSelf: 'center', marginLeft: 20, fontSize:16 }}>Forgot Password?</Text>
         <LinearGradient
-          colors={['#B01C56', '#280071']}
+          colors={['#280071', '#B01C56']}
           style={styles.loginButton}
         >
           <TouchableOpacity onPress={handleLogin}>
@@ -47,44 +58,70 @@ const LoginScreen = ({ navigation }) => {
           </TouchableOpacity>
         </LinearGradient>
       </View>
-    </ImageBackground>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-    resizeMode: 'cover', // or 'stretch'
-    justifyContent: 'center',
-    width: '100%', // Cover the full width of the screen
-  },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    padding: 16,
+    paddingTop: 20,
+    backgroundColor: 'white',
   },
-  titleContainer: {
-    alignSelf: 'flex-start', // Align the title container to the start
-  },
-  title: {
+  topText: {
     fontSize: 24,
+    fontWeight: 'bold',
+    color: '#B01C56',
+  },
+  header: {
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 16,
+  },
+  welcome: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 15,
+  },
+  welcomeText: {
+    fontSize: 22,
     color: 'white',
+    marginLeft: 8,
+  },
+  svgContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  image: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+  },
+  contentContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+    marginTop: 15,
   },
   input: {
-    height: 40,
-    width: '80%',
-    borderRadius: 5,
-    borderColor: 'gray',
+    height: 50,
+    width: '100%',
+    borderRadius: 25,
+    borderColor: 'white',
     borderWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
-    backgroundColor: 'white', // Input background color
+    color: 'gray',
+    backgroundColor: '#f0f0f0',
+    fontWeight: 'bold',
+    fontSize: 18,
+    paddingLeft: 40,
   },
   loginButton: {
-    width: '80%',
-    borderRadius: 5,
+    width: '50%',
+    borderRadius: 25,
     paddingVertical: 10,
     marginTop: 16,
   },

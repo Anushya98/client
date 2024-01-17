@@ -28,6 +28,7 @@ const LoadingPage = ({ navigation }) => {
         <ImageBackground
             source={require('../assets/Frontpage.jpg')}
             style={styles.backgroundImage}
+            blurRadius={6}
         >
             <View style={styles.loadingContainer}>
                 <Text style={styles.loadingText}>SBI Tracking</Text>
