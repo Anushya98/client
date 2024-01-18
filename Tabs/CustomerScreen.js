@@ -50,7 +50,7 @@ const CustomersScreen = () => {
 
                 <View style={styles.card}>
                     <TouchableOpacity onPress={handleFeedbackPress}>
-                        <Image source={require('../assets/Feedback_image.png')} style={styles.cardImages} />
+                        <Image source={require('../assets/Feedback_image.png')} style={styles.cardImage} />
                         <Text style={styles.cardText}>Feedback</Text>
                     </TouchableOpacity>
                 </View>
@@ -60,7 +60,7 @@ const CustomersScreen = () => {
 
                 <View style={styles.card}>
                     <TouchableOpacity onPress={handleComplaintPress}>
-                        <Image source={require('../assets/Complaint_image.png')} style={styles.cardImages} />
+                        <Image source={require('../assets/Complaint_image.png')} style={styles.cardImage} />
                         <Text style={styles.cardText}> Complaint </Text>
                     </TouchableOpacity>
                 </View>
@@ -118,13 +118,6 @@ const styles = StyleSheet.create({
         shadowRadius: 5, // Outer shadow radius
     },
     cardImage: {
-        resizeMode: 'cover',
-        alignSelf: 'center',
-        padding: 20,
-        marginTop: 25,
-        marginBottom: 15,
-    },
-    cardImages: {
         width: 50,
         height: 50,
         resizeMode: 'cover',

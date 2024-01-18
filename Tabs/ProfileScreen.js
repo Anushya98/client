@@ -12,6 +12,17 @@ const ProfileScreen = () => {
     navigation.navigate('Home');
   };
 
+  const handleAcheivementPress = () => {
+    // Navigate to the 'SuggestionPage'
+    navigation.navigate('Acheivements');
+};
+
+const handlePersonalPress = () => {
+  // Navigate to the 'Active Leads' screen
+  navigation.navigate('PersonalDetail');
+};
+
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -44,7 +55,7 @@ const ProfileScreen = () => {
         {/* Card 4 */}
 
         <View style={styles.card}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleAcheivementPress}>
             <Image source={require('../assets/achievement_image.png')} style={styles.cardImage} />
             <Text style={styles.cardText}>Achievement</Text>
           </TouchableOpacity>
@@ -54,7 +65,7 @@ const ProfileScreen = () => {
         {/* Card 5 */}
 
         <View style={styles.card}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handlePersonalPress}>
             <Image source={require('../assets/personal_detail_image.png')} style={styles.cardImage} />
             <Text style={styles.cardText}>Personal Detail</Text>
           </TouchableOpacity>
@@ -120,14 +131,14 @@ const styles = StyleSheet.create({
     shadowRadius: 5, // Outer shadow radius
   },
   cardImage: {
-    // width: '100%',
-    // height: 150,
+    width: 50,
+    height: 50,
     resizeMode: 'cover',
     alignSelf: 'center',
     padding: 20,
     marginTop: 25,
     marginBottom: 15,
-  },
+},
   cardText: {
     fontSize: 16,
     fontWeight: 'bold',

@@ -44,7 +44,7 @@ const LeadScreen = () => {
 
                 {/* Card 2 */}
                 <TouchableOpacity onPress={handleActiveLeadsPress} style={styles.card}>
-                    <Image source={require('../assets/Feedback_image.png')} style={styles.cardImages} />
+                    <Image source={require('../assets/Feedback_image.png')} style={styles.cardImage} />
                     <Text style={styles.cardText}>Active Leads</Text>
                 </TouchableOpacity>
 
@@ -101,13 +101,6 @@ const styles = StyleSheet.create({
         shadowRadius: 5, // Outer shadow radius
     },
     cardImage: {
-        resizeMode: 'cover',
-        alignSelf: 'center',
-        padding: 20,
-        marginTop: 25,
-        marginBottom: 15,
-    },
-    cardImages: {
         width: 50,
         height: 50,
         resizeMode: 'cover',

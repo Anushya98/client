@@ -17,6 +17,8 @@ import LeadDetails from '../Screens/LeadDetails';
 import SuggestionPage from '../Screens/SuggestionPage';
 import FeedbackPage from '../Screens/FeedbackPage';
 import Complaintpage from '../Screens/Complaintpage';
+import Acheivements from '../Screens/Acheivements';
+import PersonalDetails from '../Screens/PersonalDetails';
 
 const Stack = createStackNavigator();
 
@@ -43,6 +45,8 @@ const StackNavigator = () => {
             <Stack.Screen name="SuggestionPage" component={SuggestionPage} />
             <Stack.Screen name="FeedbackPage" component={FeedbackPage} />
             <Stack.Screen name="ComplaintPage" component={Complaintpage} />
+            <Stack.Screen name="Acheivements" component={Acheivements} />
+            <Stack.Screen name="PersonalDetail" component={PersonalDetails} />
         </Stack.Navigator>
     );
 };
