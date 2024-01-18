@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomersScreen from '../Tabs/CustomerScreen';
 import NotificationsScreen from '../Tabs/NotificationScreen';
-import ActiveLeadsScreen from '../Tabs/ActiveLeadScreen';
+import LeadsScreen from '../Tabs/LeadScreen';
 // import NewLeadsScreen from '../Tabs/HomeScreen';
 import ProfileScreen from '../Tabs/ProfileScreen';
 import HomeScreen from '../Tabs/HomeScreen';
@@ -66,7 +66,7 @@ const TabNavigator = () => {
 
                 <Tab.Screen
                     name="Leads"
-                    component={ActiveLeadsScreen}
+                    component={LeadsScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <Icon name="people" color={color} size={size} />

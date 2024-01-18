@@ -64,7 +64,7 @@ const ProfileScreen = () => {
         <View style={styles.card}>
           <TouchableOpacity>
             <Image source={require('../assets/incharge_image.png')} style={styles.cardImage} />
-            <Text style={styles.cardText}>Map</Text>
+            <Text style={styles.cardText}>Incharge Person & Details</Text>
           </TouchableOpacity>
         </View>
 

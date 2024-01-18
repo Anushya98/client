@@ -3,8 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-
-const CustomersScreen = () => {
+const LeadScreen = () => {
     const navigation = useNavigation();
 
     const handleBackPress = () => {
@@ -12,20 +11,17 @@ const CustomersScreen = () => {
         navigation.navigate('Home');
     };
 
-    const handleSuggestionPress = () => {
-        // Navigate to the 'SuggestionPage'
-        navigation.navigate('SuggestionPage');
+
+    const handleNewLeadsPress = () => {
+        // Navigate to the 'New Leads' screen
+        navigation.navigate('NewLeads');
     };
 
-    const handleFeedbackPress = () => {
-        // Navigate to the 'SuggestionPage'
-        navigation.navigate('FeedbackPage');
+    const handleActiveLeadsPress = () => {
+        // Navigate to the 'Active Leads' screen
+        navigation.navigate('ActiveLeads');
     };
 
-    const handleComplaintPress = () => {
-        // Navigate to the 'SuggestionPage'
-        navigation.navigate('ComplaintPage');
-    };
 
     return (
         <View style={styles.container}>
@@ -33,37 +29,24 @@ const CustomersScreen = () => {
                 <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
                     <Icon name="arrow-back" size={24} color="#000" />
                 </TouchableOpacity>
-                <Text style={styles.title}>Customers</Text>
+                <Text style={styles.title}>Leads</Text>
             </View>
 
             <View style={styles.cardContainer}>
                 {/* Card 1 */}
 
-                <View style={styles.card}>
-                    <TouchableOpacity onPress={handleSuggestionPress}>
-                        <Image source={require('../assets/suggestion_image.png')} style={styles.cardImage} />
-                        <Text style={styles.cardText}>Suggestions</Text>
-                    </TouchableOpacity>
-                </View>
+
+                {/* Card 1 */}
+                <TouchableOpacity onPress={handleNewLeadsPress} style={styles.card}>
+                    <Image source={require('../assets/suggestion_image.png')} style={styles.cardImage} />
+                    <Text style={styles.cardText}>New Leads</Text>
+                </TouchableOpacity>
 
                 {/* Card 2 */}
-
-                <View style={styles.card}>
-                    <TouchableOpacity onPress={handleFeedbackPress}>
-                        <Image source={require('../assets/Feedback_image.png')} style={styles.cardImages} />
-                        <Text style={styles.cardText}>Feedback</Text>
-                    </TouchableOpacity>
-                </View>
-
-
-                {/* Card 3 */}
-
-                <View style={styles.card}>
-                    <TouchableOpacity onPress={handleComplaintPress}>
-                        <Image source={require('../assets/Complaint_image.png')} style={styles.cardImages} />
-                        <Text style={styles.cardText}> Complaint </Text>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity onPress={handleActiveLeadsPress} style={styles.card}>
+                    <Image source={require('../assets/Feedback_image.png')} style={styles.cardImages} />
+                    <Text style={styles.cardText}>Active Leads</Text>
+                </TouchableOpacity>
 
 
             </View>
@@ -143,4 +126,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default CustomersScreen;
+export default LeadScreen;
