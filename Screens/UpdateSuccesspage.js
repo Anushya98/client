@@ -1,0 +1,163 @@
+// UpdateSuccessPage.js
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+
+const UpdateSuccessPage = ({ route }) => {
+    const { updatedDetails } = route.params;
+    const navigation = useNavigation();
+
+    const handleEditPress = () => {
+        // Navigate to the 'PersonalDetail' route
+        navigation.navigate('PersonalDetail');
+    };
+
+    const handleOkPress = () => {
+        // Navigate to the 'Profile' route
+        navigation.navigate('Profile');
+    };
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.cardContainer}>
+                <LinearGradient colors={['#280071', '#B01C56']} style={styles.gradientContainer}>
+                    <Image source={require('../assets/Success_image.png')} style={styles.tickIcon} />
+                    <Text style={styles.successText}>Details Created with the following information Successfully!!</Text>
+                </LinearGradient>
+            </View>
+            <View style={styles.profileContainer}>
+                <Image
+                    source={updatedDetails.profileImage
+                        ? { uri: updatedDetails.profileImage }
+                        : require('../assets/profile_image.png')} // Use your path to the default avatar image
+                    style={styles.profileImage}
+                />
+            </View>
+            <View style={styles.detailsContainer}>
+                <View style={styles.detailRow}>
+                    <Text style={styles.detailHeading}>Name: </Text>
+                    <Text style={styles.detailText}>{updatedDetails.name}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                    <Text style={styles.detailHeading}>ID: </Text>
+                    <Text style={styles.detailText}>{updatedDetails.idNumber}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                    <Text style={styles.detailHeading}>Branch Name: </Text>
+                    <Text style={styles.detailText}>{updatedDetails.branchName}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                    <Text style={styles.detailHeading}>Mobile Number: </Text>
+                    <Text style={styles.detailText}>{updatedDetails.mobileNumber}</Text>
+                </View>
+            </View>
+            <View style={styles.buttonContainer}>
+                <LinearGradient
+                    colors={['#280071', '#B01C56']}
+                    style={[styles.button, styles.okButton]}
+                >
+                    <TouchableOpacity onPress={handleOkPress}>
+                        <Text style={styles.buttonText}>Ok</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+                <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
+                    <Text style={{ color: '#000', fontSize: 16, fontWeight: 'bold', textAlign: "center" }}>Edit</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    successCard: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    tickIcon: {
+        width: 50,
+        height: 50,
+        marginBottom: 10,
+    },
+    cardContainer: {
+        paddingHorizontal: 20,
+        paddingTop: 50, // Updated paddingTop
+        alignItems: 'center', // Center content horizontally
+        justifyContent: 'center', // Center content vertically
+    },
+    successText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#fff',
+        textAlign: "center",
+        marginTop: 20, // Added marginTop
+    },
+    gradientContainer: {
+        alignItems: 'center',
+        borderRadius: 10,
+        padding: 20,
+        marginBottom: 20,
+    },
+    profileContainer: {
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    profileImage: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        borderWidth: 2,
+        borderColor: '#B01C56',
+    },
+    detailsContainer: {
+        marginTop: 20,
+        paddingHorizontal: 40,
+        marginBottom: 20,
+    },
+    detailRow: {
+        flexDirection: 'row',
+        marginBottom: 8,
+        alignItems: 'center',
+    },
+    detailHeading: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#000',
+        marginRight: 8,
+    },
+    detailText: {
+        fontSize: 16,
+        color: '#000',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+    },
+    okButton: {
+        backgroundColor: '#B01C56',
+        padding: 12,
+        borderRadius: 8,
+        flex: 1,
+        marginRight: 8,
+    },
+    editButton: {
+        borderColor: '#B01C56',
+        borderWidth: 1,
+        padding: 12,
+        borderRadius: 8,
+        flex: 1,
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: 'center',
+    },
+});
+
+export default UpdateSuccessPage;

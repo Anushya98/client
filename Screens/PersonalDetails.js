@@ -4,13 +4,19 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import ImagePicker from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
+import UpdateSuccessPage from './UpdateSuccesspage';
+
 
 const PersonalDetails = () => {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState(null);
     const [name, setName] = useState('');
+    const [idNumber, setIdNumber] = useState('');
     const [branchName, setBranchName] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
+    const [selectedCountryCode, setSelectedCountryCode] = useState(null);
+
 
     const handleBackPress = () => {
         // Navigate to the 'Home' route
@@ -20,12 +26,17 @@ const PersonalDetails = () => {
 
 
     const handleUpdatePress = () => {
-        // Implement logic to update lead details
-        // For example, you can send an API request to update the details
+        const updatedPersonalDetails = {
+          name,
+          idNumber,
+          branchName,
+          mobileNumber: `${selectedCountryCode} ${mobileNumber}`, // Combine country code and mobile number
+          profileImage,
+        };
         console.log('Updated Personal details:', updatedPersonalDetails);
-        // After updating, navigate back to the 'LeadDetails' route
-        navigation.navigate('Profile');
-    };
+        navigation.navigate('UpdateSuccess', { updatedDetails: updatedPersonalDetails });
+      };
+
     const handleAddRemoveProfile = () => {
         if (profileImage) {
             // Remove profile logic
@@ -45,16 +56,20 @@ const PersonalDetails = () => {
             },
         };
 
-        ImagePicker.showImagePicker(options, (response) => {
+        launchImageLibrary(options, (response) => {
+            console.log('ImagePicker Response:', response);
+
             if (response.didCancel) {
                 console.log('User cancelled image picker');
             } else if (response.error) {
                 console.log('ImagePicker Error: ', response.error);
             } else {
-                setProfileImage(response.uri);
+                console.log('Selected Image URI:', response.assets[0].uri);
+                setProfileImage(response.assets[0].uri);
             }
         });
     };
+
 
 
     return (
@@ -67,17 +82,10 @@ const PersonalDetails = () => {
             </View>
 
             <View style={styles.profileContainer}>
-
-                {profileImage ? (
-                    <Image source={{ uri: profileImage }} style={styles.profileImage} />
-                ) : (
-                    
-                      <Image
+                <Image
                     source={profileImage ? { uri: profileImage } : require('../assets/profile_image.png')}
                     style={styles.profileImage}
                 />
-                    
-                )}
                 <TouchableOpacity onPress={handleAddRemoveProfile} style={styles.addRemoveButton}>
                     <Text style={styles.addRemoveButtonText}>{profileImage ? 'Remove' : 'Add'} Profile</Text>
                 </TouchableOpacity>
@@ -90,6 +98,13 @@ const PersonalDetails = () => {
                     placeholder="Name"
                     value={name}
                     onChangeText={(text) => setName(text)}
+                />
+                <Text style={styles.label}>ID:</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="ID"
+                    value={idNumber}
+                    onChangeText={(text) => setIdNumber(text)}
                 />
                 <Text style={styles.label}>Branch Name:</Text>
                 <TextInput
@@ -104,6 +119,7 @@ const PersonalDetails = () => {
                     placeholder="Mobile Number"
                     value={mobileNumber}
                     onChangeText={(text) => setMobileNumber(text)}
+                    keyboardType="numeric"
                 />
             </View>
             <View style={styles.buttonContainer}>
@@ -135,9 +151,6 @@ const styles = StyleSheet.create({
         padding: 15,
         borderBottomWidth: 2,
         borderBottomColor: '#ddd',
-    },
-    backButton: {
-        marginRight: 10,
     },
     title: {
         fontSize: 18,

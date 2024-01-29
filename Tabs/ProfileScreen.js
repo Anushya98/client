@@ -1,5 +1,5 @@
 // components/ProfileScreen.js
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -11,17 +11,32 @@ const ProfileScreen = () => {
     // Navigate to the 'Home' route
     navigation.navigate('Home');
   };
-
+  const handleAttendancePress = () => {
+    // Navigate to the 'SuggestionPage'
+    navigation.navigate('AttendancePage');
+  };
   const handleAcheivementPress = () => {
     // Navigate to the 'SuggestionPage'
     navigation.navigate('Acheivements');
-};
+  };
 
-const handlePersonalPress = () => {
-  // Navigate to the 'Active Leads' screen
-  navigation.navigate('PersonalDetail');
-};
+  const handlePersonalPress = () => {
+    // Navigate to the 'Active Leads' screen
+    navigation.navigate('PersonalDetail');
+  };
 
+
+  const handleInchargePersonPress = () => {
+    const inchargePersonDetails = {
+      profileImage: require('../assets/profile_image.png'), // Change 'photo' to 'profileImage'
+      name: 'John Doe',
+      id: 'ID123',
+      branchName: 'Main Branch',
+      mobileNumber: '+1 123 456 7890',
+    };
+
+    navigation.navigate('InchargePersonDetails', { inchargePersonDetails });
+  };
 
   return (
     <View style={styles.container}>
@@ -45,7 +60,7 @@ const handlePersonalPress = () => {
         {/* Card 3 */}
 
         <View style={styles.card}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleAttendancePress}>
             <Image source={require('../assets/Attendance_image.png')} style={styles.cardImage} />
             <Text style={styles.cardText}>Attendance</Text>
           </TouchableOpacity>
@@ -73,7 +88,7 @@ const handlePersonalPress = () => {
 
 
         <View style={styles.card}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleInchargePersonPress}>
             <Image source={require('../assets/incharge_image.png')} style={styles.cardImage} />
             <Text style={styles.cardText}>Incharge Person & Details</Text>
           </TouchableOpacity>
@@ -138,7 +153,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 25,
     marginBottom: 15,
-},
+  },
   cardText: {
     fontSize: 16,
     fontWeight: 'bold',

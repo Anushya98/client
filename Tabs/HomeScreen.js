@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import AttendanceModal from '../Screens/AttendancePage';
+import AttendanceModal from '../Screens/AttendanceFrontPage';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
