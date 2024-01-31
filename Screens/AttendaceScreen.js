@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Svg, { Circle } from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
 
+const AttendanceCard = ({ title, time, date }) => (
+    <View style={styles.attendanceCard}>
+        <Text style={styles.attendanceCardTitle}>{title}</Text>
+        <Text style={styles.attendanceCardTime}>{time}</Text>
+        <Text style={styles.attendanceCardDate}>{date}</Text>
+    </View>
+);
+
 const AttendancePage = () => {
     const [isCheckedIn, setIsCheckedIn] = useState(false);
     const [checkInTime, setCheckInTime] = useState(null);
     const [checkOutTime, setCheckOutTime] = useState(null);
+    const [runningTime, setRunningTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
     const formatTime = (time) => {
-        if (!time) return 'Not Checked In';
+        if (!time) return '00:00';
         const date = new Date(time);
         const hours = date.getHours();
         const minutes = date.getMinutes();
@@ -31,10 +40,48 @@ const AttendancePage = () => {
         }
         setIsCheckedIn(!isCheckedIn);
     };
+
+
     const handleBackPress = () => {
         // Navigate to the 'Home' route
         navigation.navigate('profile');
     };
+    useEffect(() => {
+        let interval;
+        if (isCheckedIn) {
+            interval = setInterval(() => {
+                const currentTime = new Date();
+                const durationMillis = currentTime.getTime() - checkInTime.getTime();
+                const updatedHours = Math.floor(durationMillis / (1000 * 60 * 60));
+                const updatedMinutes = Math.floor((durationMillis % (1000 * 60 * 60)) / (1000 * 60));
+                const updatedSeconds = Math.floor((durationMillis % (1000 * 60)) / 1000);
+
+                setRunningTime({ hours: updatedHours, minutes: updatedMinutes, seconds: updatedSeconds });
+            }, 1000);
+        }
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [isCheckedIn, checkInTime]);
+
+    const getCurrentDayAndDate = () => {
+        const currentDate = new Date();
+        const optionsDay = { weekday: 'long' };
+        const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
+        const day = currentDate.toLocaleDateString('en-US', optionsDay);
+        const date = currentDate.toLocaleDateString('en-US', optionsDate);
+        return { day, date };
+    };
+    const dayAndDate = getCurrentDayAndDate();
+
+    const savedEntries = [
+        { title: 'Check In', time: '08:00 AM', date: 'Tue, Jan 30, 2024' },
+        { title: 'Check Out', time: '05:00 PM', date: 'Tue, Jan 30, 2024' },
+        // Add more entries as needed
+    ];
+
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -70,6 +117,37 @@ const AttendancePage = () => {
                     </LinearGradient>
                 </View>
                 {/* Check-in/out button */}
+                <View style={styles.circleBorder}>
+                    <View style={styles.totalDurationContainer}>
+                        <Text style={styles.totalDurationTextHead}>Total In Hours</Text>
+                        <View style={styles.totalDurationContainer}>
+                            <Text style={styles.totalDurationText}>Hours   Minutes   Seconds</Text>
+                            <Text style={styles.durationTimeText}>
+                                {`${String(runningTime.hours).padStart(2, '0')} : ${String(runningTime.minutes).padStart(2, '0')} : ${String(runningTime.seconds).padStart(2, '0')}`}
+                            </Text>
+                        </View>
+                        {/* Current date and day */}
+                        <View style={styles.dayAndDateContainer}>
+                            <Text style={styles.dayAndDateText}>{dayAndDate.day},</Text>
+                            {/* Display date with year below current day */}
+                            <Text style={styles.dayAndDateText}>{dayAndDate.date}</Text>
+                            <Text style={styles.dayAndDateText}>of 8.00 hours</Text>
+                        </View>
+
+                    </View>
+                </View>
+
+                <View style={styles.savedEntriesContainer}>
+                    {savedEntries.map((entry, index) => (
+                        <AttendanceCard
+                            key={index}
+                            title={entry.title}
+                            time={entry.time}
+                            date={entry.date}
+                        />
+                    ))}
+                </View>
+
                 <TouchableOpacity style={styles.button} onPress={handleCheckInOut}>
                     <Text style={styles.buttonText}>{isCheckedIn ? 'Check Out' : 'Check In'}</Text>
                 </TouchableOpacity>
@@ -168,6 +246,75 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         fontSize: 16,
     },
+    circleBorder: {
+        alignSelf: 'center',
+        // marginTop: 10,
+        width: 200,
+        height: 200,
+        borderRadius: 100,
+        borderWidth: 2,
+        borderColor: '#B01C56',
+        alignItems: 'center',  // Add this line to center the content horizontally
+        justifyContent: 'center',
+    },
+    totalDurationContainer: {
+        alignItems: 'center',
+        // marginTop: 10,
+    },
+    totalDurationTextHead: {
+        fontSize: 18,
+        color: '#333',
+        fontWeight: "600"
+    },
+    durationTimeContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 5,
+    },
+    durationTimeText: {
+        fontSize: 28,
+        color: '#B01C56',
+        marginRight: 5,
+        fontWeight: 'bold',
+    },
+    durationTimeLabel: {
+        fontSize: 16,
+        color: '#333',
+    },
+    dayAndDateContainer: {
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    dayAndDateText: {
+        fontSize: 14,
+        color: '#333',
+    },
+    attendanceCard: {
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 16,
+        marginBottom: 10,
+        elevation: 3,
+    },
+    attendanceCardTitle: {
+        fontSize: 16,
+        color: '#333',
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    attendanceCardTime: {
+        fontSize: 14,
+        color: '#B01C56',
+        marginBottom: 5,
+    },
+    attendanceCardDate: {
+        fontSize: 12,
+        color: '#666',
+    },
+    savedEntriesContainer: {
+        marginTop: 20,
+    },
+
 });
 
 export default AttendancePage;

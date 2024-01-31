@@ -22,6 +22,7 @@ import PersonalDetails from '../Screens/PersonalDetails';
 import UpdateSuccessPage from '../Screens/UpdateSuccesspage';
 import InchargePersonDetails from '../Screens/InchargeDetails';
 import AttendancePage from '../Screens/AttendaceScreen';
+import HistoryPage from '../Screens/HistoryPage';
 
 const Stack = createStackNavigator();
 
@@ -53,6 +54,7 @@ const StackNavigator = () => {
             <Stack.Screen name="UpdateSuccess" component={UpdateSuccessPage} />
             <Stack.Screen name="InchargePersonDetails" component={InchargePersonDetails} />
             <Stack.Screen name="AttendancePage" component={AttendancePage} />
+            <Stack.Screen name="HistoryPage" component={HistoryPage} />
             
         </Stack.Navigator>
     );
