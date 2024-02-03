@@ -1,6 +1,6 @@
 // components/NotificationsScreen.js
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Image, Alert } from 'react-native';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import { ActivityIndicator } from 'react-native';
 import RNFS from 'react-native-fs';
@@ -76,6 +76,20 @@ const CameraScreen = ({ navigation }) => {
 
 
     const takePicture = async () => {
+        const isLocationEnabled = await isLocationServiceEnabled();
+
+        if (!isLocationEnabled) {
+            Alert.alert(
+                'Location Services Required',
+                'Please enable location services to take a photo.',
+                [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ],
+                { cancelable: false }
+            );
+            return;
+        }
+
         if (camera != null) {
             await getLocation(); // Get location before taking the picture
             const photo = await camera.current.takePhoto();
@@ -84,6 +98,21 @@ const CameraScreen = ({ navigation }) => {
             console.log('Photo captured at:', photo.path);
             console.log('Location:', location);
         }
+    };
+    const isLocationServiceEnabled = () => {
+        return new Promise((resolve) => {
+            Geolocation.getCurrentPosition(
+                () => {
+                    resolve(true);
+                },
+                (error) => {
+                    if (error.code === 2) {
+                        resolve(false);
+                    }
+                },
+                { enableHighAccuracy: false, timeout: 2000, maximumAge: 3600000 }
+            );
+        });
     };
 
     const handleSavePhoto = async () => {
