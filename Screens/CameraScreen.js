@@ -16,6 +16,7 @@ const CameraScreen = ({ navigation }) => {
     const [imageData, setImageData] = useState('');
     const [takePhotoclicked, setTakePhotoclicked] = useState(false);
     const [location, setLocation] = useState(null);
+    const [locationName, setLocationName] = useState(null); // Added state for location name
 
 
     useEffect(() => {
@@ -32,7 +33,17 @@ const CameraScreen = ({ navigation }) => {
             console.log('Camera or location permissions not granted');
         }
     };
-
+    useEffect(() => {
+        if (location && !locationName) {
+            // Only fetch and set location name if location is available and locationName is not set
+            getLocationName(location).then((locationNameResult) => {
+                if (locationNameResult) {
+                    console.log('Location Name:', locationNameResult);
+                    setLocationName(locationNameResult); // Store location name in state
+                }
+            });
+        }
+    }, [location, locationName]);
     const getLocation = async () => {
         try {
             const locationStatus = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
@@ -48,9 +59,11 @@ const CameraScreen = ({ navigation }) => {
                         // Handle error or set a default location
                         setLocation(null);
                     },
-                    {  enableHighAccuracy: false,
+                    {
+                        enableHighAccuracy: false,
                         timeout: 2000,
-                        maximumAge: 3600000}
+                        maximumAge: 3600000
+                    }
                 );
             } else {
                 console.log('Location permission not granted');
@@ -73,6 +86,34 @@ const CameraScreen = ({ navigation }) => {
         }
     };
 
+    const handleSavePhoto = async () => {
+        if (imageData) {
+            const permanentPath = await savePhoto(imageData);
+            if (permanentPath) {
+                const locationNameResult = await getLocationName(location); // Get location name
+                if (locationNameResult) {
+                    console.log('Location Name:', locationNameResult);
+                    setLocationName(locationNameResult); // Store location name in state
+                    setTakePhotoclicked(false);
+                    navigation.navigate('MainPage');
+                }
+            }
+        }
+    };
+
+    const getLocationName = async (coords) => {
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.latitude}&lon=${coords.longitude}`
+            );
+            const data = await response.json();
+            const locationName = data.display_name;
+            return locationName;
+        } catch (error) {
+            console.error('Error getting location name:', error);
+            return null;
+        }
+    };
     const savePhoto = async (photoPath) => {
         try {
             const permanentPath = RNFS.DocumentDirectoryPath + '/savedPhoto.jpg';
@@ -82,16 +123,6 @@ const CameraScreen = ({ navigation }) => {
         } catch (error) {
             console.error('Error saving photo:', error);
             return null;
-        }
-    };
-
-    const handleSavePhoto = async () => {
-        if (imageData) {
-            const permanentPath = await savePhoto(imageData);
-            if (permanentPath) {
-                setTakePhotoclicked(false);
-                navigation.navigate('MainPage');
-            }
         }
     };
 
@@ -148,7 +179,14 @@ const CameraScreen = ({ navigation }) => {
                             style={{
                                 width: '90%',
                                 height: 200
-                            }} />)}
+                            }}
+                        />
+                    )}
+                    {locationName && (
+                        <Text style={styles.locationText}>{`Location: `}
+                            <Text style={styles.normalText}>{locationName}</Text>
+                        </Text>
+                    )}
                     <TouchableOpacity style={{
                         width: '90%',
                         height: 50,
@@ -186,5 +224,20 @@ const CameraScreen = ({ navigation }) => {
         </View>
     );
 };
+
+
+const styles = StyleSheet.create({
+    locationText: {
+        paddingHorizontal: 20,
+        marginTop: 10,
+        fontSize: 18,
+        fontWeight: 'bold', // Bolder font for the "Location:" text
+        color: '#333',
+    },
+    normalText: {
+        fontWeight: 'normal', // Normal font weight for the location name
+    },
+});
+
 
 export default CameraScreen;
