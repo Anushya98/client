@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Svg, { Circle } from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 
 const AttendanceCard = ({ title, time, date }) => (
     <View style={styles.attendanceCard}>
@@ -17,6 +18,7 @@ const AttendancePage = () => {
     const [checkInTime, setCheckInTime] = useState(null);
     const [checkOutTime, setCheckOutTime] = useState(null);
     const [runningTime, setRunningTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
+    const navigation = useNavigation();
 
     const formatTime = (time) => {
         if (!time) return '00:00';

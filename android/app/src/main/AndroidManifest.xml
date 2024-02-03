@@ -9,6 +9,7 @@
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-feature android:name="android.hardware.location.gps" />
 
 
     <application
@@ -30,5 +31,9 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+    
+       <meta-data
+     android:name="com.google.android.geo.API_KEY"
+     android:value="AIzaSyAyzRKT4sBRcxzztu8Fw7K7CJAC5V9GjYc"/>
     </application>
 </manifest>

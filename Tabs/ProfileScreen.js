@@ -25,6 +25,9 @@ const ProfileScreen = () => {
     navigation.navigate('PersonalDetail');
   };
 
+  const handleHistoryPress = () => {
+    navigation.navigate('HistoryPage');
+  };
 
   const handleInchargePersonPress = () => {
     const inchargePersonDetails = {
@@ -51,7 +54,7 @@ const ProfileScreen = () => {
         {/* Card 1 */}
 
         <View style={styles.card}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleHistoryPress}>
             <Image source={require('../assets/map_image.png')} style={styles.cardImage} />
             <Text style={styles.cardText}>History of map</Text>
           </TouchableOpacity>
