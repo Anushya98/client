@@ -122,9 +122,6 @@ const HomeScreen = ({ navigation }) => {
         setIsCheckingIn(!isCheckingIn);
     };
 
-
-
-
     const calculateTotalHours = () => {
         if (checkInTime !== "00:00" && checkOutTime !== "00:00") {
             // Assuming checkInTime and checkOutTime are in the format "HH:mm"
@@ -133,20 +130,27 @@ const HomeScreen = ({ navigation }) => {
 
             const currentDate = new Date();
             const checkIn = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), checkInHours, checkInMinutes);
-            const checkOut = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), checkOutHours, checkOutMinutes);
+            let checkOut = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), checkOutHours, checkOutMinutes);
+
+            // Check if the check-out time is on the next day
+            if (checkOut < checkIn) {
+                checkOut = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1, checkOutHours, checkOutMinutes);
+            }
 
             // Check if the date objects are valid
             if (isNaN(checkIn) || isNaN(checkOut)) {
                 return 'Invalid date';
             }
 
-            if (checkOut > checkIn) {
-                const diffInMilliseconds = checkOut - checkIn;
-                const totalHours = diffInMilliseconds / (1000 * 60 * 60);
-                return totalHours.toFixed(2) + ' hours';
-            } else {
-                return '00:00';
+            const diffInMilliseconds = checkOut - checkIn;
+            const totalHours = diffInMilliseconds / (1000 * 60 * 60);
+
+            // Check if the total hours is exactly 24, and return '24 hours' in that case
+            if (totalHours === 24) {
+                return '24 hours';
             }
+
+            return totalHours.toFixed(2) + ' hours';
         }
         return 'N/A';
     };
