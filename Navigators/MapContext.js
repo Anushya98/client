@@ -1,52 +1,29 @@
-// MapContext.js (or wherever you manage locations)
-
-import React, { createContext, useContext, useReducer } from 'react';
-
-// Define your context and reducer
+import React, { createContext, useContext, useState } from 'react';
 
 const MapContext = createContext();
 
-const mapReducer = (state, action) => {
-  switch (action.type) {
-    case 'ADD_LOCATION':
-      return {
-        ...state,
-        locations: [...state.locations, action.payload],
-      };
-    // other cases as needed
-    default:
-      return state;
-  }
-};
-
-const MapProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(mapReducer, { locations: [] });
+export const MapProvider = ({ children }) => {
+  const [locations, setLocations] = useState([]);
 
   const addLocation = (location) => {
-    dispatch({ type: 'ADD_LOCATION', payload: location });
+    setLocations((prevLocations) => [...prevLocations, location]);
   };
 
-  // other functions and state variables as needed
+  const removeLastLocation = () => {
+    setLocations((prevLocations) => prevLocations.slice(0, -1));
+  };
 
   return (
-    <MapContext.Provider
-      value={{
-        locations: state.locations,
-        addLocation,
-        // other values as needed
-      }}
-    >
+    <MapContext.Provider value={{ locations, addLocation, removeLastLocation }}>
       {children}
     </MapContext.Provider>
   );
 };
 
-const useMap = () => {
+export const useMap = () => {
   const context = useContext(MapContext);
   if (!context) {
     throw new Error('useMap must be used within a MapProvider');
   }
   return context;
 };
-
-export { MapProvider, useMap };

@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import AttendanceModal from '../Screens/AttendanceFrontPage';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useMap } from '../Navigators/MapContext';
 
 const HomeScreen = ({ navigation }) => {
     const [checkInTime, setCheckInTime] = useState("00:00");
@@ -12,6 +13,8 @@ const HomeScreen = ({ navigation }) => {
     const [totalHours, setTotalHours] = useState("00:00");
     const [isCheckingIn, setIsCheckingIn] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
+    const { addLocation } = useMap();
+
 
     const getCurrentTime = () => {
         const now = new Date();
@@ -97,18 +100,21 @@ const HomeScreen = ({ navigation }) => {
             // User is checking out
             const currentTime = getCurrentTime();
             setCheckOutTime(currentTime);
-
+    
             // Calculate total hours and save to AsyncStorage
             const totalHoursValue = calculateTotalHours();
             saveCheckOutTime(currentTime);
             saveTotalHours(totalHoursValue);
             setTotalHours(totalHoursValue);
+    
+            // Remove the last location from the map context when checking out
+            removeLastLocation();
         } else {
             // User is checking in
             const currentTime = getCurrentTime();
             setCheckInTime(currentTime);
             saveCheckInTime(currentTime);
-
+    
             // Reset check-out time and total hours when checking in after checking out
             if (checkOutTime !== "00:00") {
                 setCheckOutTime("00:00");
@@ -116,12 +122,55 @@ const HomeScreen = ({ navigation }) => {
                 saveCheckOutTime("00:00");
                 saveTotalHours("00:00");
             }
+    
+            // Add the current location to the map context when checking in
+            addCurrentLocation();
         }
-
+    
         // Toggle the state
         setIsCheckingIn(!isCheckingIn);
     };
-
+    
+    const addCurrentLocation = async () => {
+        try {
+            const position = await new Promise((resolve, reject) => {
+                Geolocation.getCurrentPosition(
+                    (position) => resolve(position),
+                    (error) => reject(error),
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                );
+            });
+    
+            if (position && position.coords) {
+                const { latitude, longitude } = position.coords;
+    
+                const response = await axios.get(
+                    `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+                );
+    
+                const address = response.data.display_name || 'Unknown Location';
+    
+                const newLocation = {
+                    latitude,
+                    longitude,
+                    timestamp: new Date(),
+                    locationName: address,
+                };
+    
+                // Add the current location to the map context
+                addLocation(newLocation);
+            }
+        } catch (error) {
+            console.log('Error getting current position:', error);
+        }
+    };
+    
+    // const removeLastLocation = () => {
+    //     // Remove the last location from the map context
+    //     // (assuming you have a function in your MapContext to remove the last location)
+    //     // Example: removeLastLocation();
+    //     removeLastLocation()
+    // };
     const calculateTotalHours = () => {
         if (checkInTime !== "00:00" && checkOutTime !== "00:00") {
             // Assuming checkInTime and checkOutTime are in the format "HH:mm"

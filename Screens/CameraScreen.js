@@ -5,7 +5,7 @@ import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import { ActivityIndicator } from 'react-native';
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import { request as requestPermissions, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 
@@ -73,33 +73,7 @@ const CameraScreen = ({ navigation }) => {
             console.error('Error checking location permission:', error);
         }
     };
-
-
-    const takePicture = async () => {
-        const isLocationEnabled = await isLocationServiceEnabled();
-
-        if (!isLocationEnabled) {
-            Alert.alert(
-                'Location Services Required',
-                'Please enable location services to take a photo.',
-                [
-                    { text: 'OK', onPress: () => console.log('OK Pressed') },
-                ],
-                { cancelable: false }
-            );
-            return;
-        }
-
-        if (camera != null) {
-            await getLocation(); // Get location before taking the picture
-            const photo = await camera.current.takePhoto();
-            setImageData(photo.path);
-            setTakePhotoclicked(false);
-            console.log('Photo captured at:', photo.path);
-            console.log('Location:', location);
-        }
-    };
-    const isLocationServiceEnabled = () => {
+    const isLocationServiceEnabled = async () => {
         return new Promise((resolve) => {
             Geolocation.getCurrentPosition(
                 () => {
@@ -114,7 +88,39 @@ const CameraScreen = ({ navigation }) => {
             );
         });
     };
+    
 
+    const takePicture = async () => {
+        try {
+            const isLocationEnabled = await isLocationServiceEnabled();
+
+            if (!isLocationEnabled) {
+                Alert.alert(
+                    'Location Services Required',
+                    'Please enable location services to take a photo.',
+                    [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+                    { cancelable: false }
+                );
+                return;
+            }
+
+            if (camera.current) {
+                await getLocation();
+                const photo = await camera.current.takePhoto();
+                
+                if (photo) {
+                    setImageData(photo.path);
+                    setTakePhotoclicked(false);
+                    console.log('Photo captured at:', photo.path);
+                    console.log('Location:', location);
+                } else {
+                    console.log('Error capturing photo');
+                }
+            }
+        } catch (error) {
+            console.error('Error taking picture:', error);
+        }
+    };
     const handleSavePhoto = async () => {
         if (imageData) {
             const permanentPath = await savePhoto(imageData);
